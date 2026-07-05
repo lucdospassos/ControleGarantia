@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Controle de Garantias</title>
+<style>
+  :root{
+    --ink:#1c2430;
+    --ink-soft:#5b6472;
+    --paper:#f4f6f8;
+    --card:#ffffff;
+    --line:#e1e6eb;
+    --accent:#1f6f5c;
+    --accent-dark:#164f41;
+    --warn:#b3541e;
+    --danger:#a4322a;
+    --danger-bg:#fbeceb;
+    --ok-bg:#e9f4f0;
+    --wa:#25a35a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--accent-dark);
+    color:#fff;
+    padding:22px 18px 60px 18px;
+    position:relative;
+  }
+  header h1{ margin:0; font-size:1.35rem; font-weight:700; letter-spacing:.2px; }
+  header p{ margin:4px 0 0 0; font-size:.85rem; color:#cfe3dc; }
+  .wrap{ max-width:640px; margin:0 auto; padding:0 14px; }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    margin-top:-40px;
+    box-shadow:0 6px 18px rgba(20,30,40,0.08);
+  }
+  .card + .card{ margin-top:16px; }
+  label{
+    display:block;
+    font-size:.78rem;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:10px 0 4px 0;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+  }
+  input[type=text], input[type=date], input[type=tel]{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:9px;
+    font-size:1rem;
+    background:#fbfcfd;
+    color:var(--ink);
+  }
+  input:focus{ outline:2px solid var(--accent); outline-offset:1px; background:#fff; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border:none; border-radius:9px; padding:11px 16px;
+    font-size:.95rem; font-weight:600; cursor:pointer;
+  }
+  .btn-primary{ background:var(--accent); color:#fff; width:100%; margin-top:14px; }
+  .btn-primary:active{ background:var(--accent-dark); }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .btn-sm{ font-size:.8rem; padding:9px 12px; }
+  .toolbar{ display:flex; gap:8px; margin-top:16px; }
+  .toolbar input[type=text]{ flex:1; }
+  .section-title{
+    font-size:.78rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.5px; color:var(--ink-soft); margin:20px 4px 8px 4px;
+  }
+  .item{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:13px 14px; margin-bottom:10px;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .item-main{ min-width:0; }
+  .item-code{ font-size:.72rem; font-weight:700; color:var(--accent-dark); letter-spacing:.3px; }
+  .item-name{ font-size:1rem; font-weight:600; margin:2px 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .item-phone{ font-size:.82rem; color:var(--ink-soft); }
+  .item-date{ font-size:.82rem; color:var(--ink-soft); margin-top:2px; }
+  .badge{ font-size:.7rem; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; display:inline-block; margin-top:4px; }
+  .badge-ok{ background:var(--ok-bg); color:var(--accent-dark); }
+  .badge-warn{ background:#fbf1e6; color:var(--warn); }
+  .badge-expired{ background:var(--danger-bg); color:var(--danger); }
+  .item-actions{ display:flex; flex-direction:column; gap:6px; }
+  .icon-btn{ border:none; background:none; font-size:1.15rem; cursor:pointer; padding:2px; line-height:1; }
+  .empty{ text-align:center; color:var(--ink-soft); padding:40px 20px; font-size:.9rem; }
+
+  .storage-card{ font-size:.85rem; }
+  .storage-status{ display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .dot-off{ background:#c7ccd2; }
+  .dot-on{ background:var(--accent); }
+  .dot-warn{ background:var(--warn); }
+  .storage-desc{ color:var(--ink-soft); font-size:.8rem; margin:4px 0 10px 0; line-height:1.4; }
+  .storage-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+  .banner{
+    background:#fbf1e6; border:1px solid #f0d9bb; color:#8a5215;
+    border-radius:10px; padding:10px 12px; font-size:.82rem;
+    margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .banner button{ flex-shrink:0; }
+
+  footer{ max-width:640px; margin:22px auto 0 auto; padding:0 14px; display:flex; gap:10px; }
+  footer .btn{ flex:1; font-size:.85rem; padding:10px; }
+  #fileImport{ display:none; }
+  [hidden]{ display:none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Controle de Garantias</h1>
+    <p>Seus dados ficam salvos neste celular, sem internet.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <label for="codigo">Código</label>
+    <input type="text" id="codigo" placeholder="Ex: OS-1042">
+
+    <label for="nome">Nome do cliente</label>
+    <input type="text" id="nome" placeholder="Ex: Maria Souza">
+
+    <label for="fone">Fone / WhatsApp</label>
+    <input type="tel" id="fone" placeholder="Ex: (11) 91234-5678">
+
+    <label for="data">Data da garantia (vencimento)</label>
+    <input type="date" id="data">
+
+    <button class="btn btn-primary" id="btnSalvar">Salvar registro</button>
+  </div>
+
+  <!-- Bloco: gravação automática em arquivo (só aparece se o navegador suportar) -->
+  <div class="card storage-card" id="blocoArquivo" hidden>
+    <div class="storage-status">
+      <span class="dot dot-off" id="dotArquivo"></span>
+      <strong id="tituloArquivo">Backup automático em arquivo</strong>
+    </div>
+    <div class="storage-desc" id="descArquivo">
+      Vincule um arquivo .json uma vez. A partir daí, todo registro salvo aqui também é gravado automaticamente nesse arquivo.
+    </div>
+    <div class="storage-actions">
+      <button class="btn btn-ghost btn-sm" id="btnVincularArquivo">Vincular arquivo</button>
+      <button class="btn btn-ghost btn-sm" id="btnReautorizar" hidden>Reautorizar acesso</button>
+      <button class="btn btn-ghost btn-sm" id="btnDesvincular" hidden>Desvincular</button>
+    </div>
+  </div>
+
+  <!-- Aviso para quem não tem a API disponível -->
+  <div class="card storage-card" id="blocoArquivoNaoSuportado" hidden>
+    <div class="storage-status">
+      <span class="dot dot-warn"></span>
+      <strong>Backup automático indisponível</strong>
+    </div>
+    <div class="storage-desc">
+      Seu navegador ainda não permite gravar direto num arquivo do celular. Os dados continuam salvos aqui normalmente — use "Exportar backup" com frequência para ter uma cópia de segurança em .json.
+    </div>
+  </div>
+
+  <!-- Bloco: backup automático via download (funciona em qualquer navegador) -->
+  <div class="card storage-card" id="blocoAutoDownload">
+    <div class="storage-status">
+      <span class="dot dot-off" id="dotAutoDownload"></span>
+      <strong>Backup automático (qualquer navegador)</strong>
+    </div>
+    <div class="storage-desc">
+      Ativando isso, toda vez que você salvar um registro o app baixa sozinho uma cópia completa e atualizada em .json para a pasta Downloads — funciona mesmo sem suporte a "vincular arquivo". Como o navegador não sobrescreve arquivos, as cópias vão se acumular ali como "garantias-auto-backup (1).json", "(2)"... de vez em quando vale apagar as mais antigas.
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-weight:600;color:var(--ink);font-size:.85rem;">
+      <input type="checkbox" id="checkAutoDownload" style="width:auto;">
+      Ativar backup automático a cada registro
+    </label>
+  </div>
+
+  <div id="bannerLembrete"></div>
+
+  <div class="toolbar">
+    <input type="text" id="busca" placeholder="Buscar por código ou nome">
+  </div>
+
+  <div class="section-title" id="contagem">Registros</div>
+  <div id="lista"></div>
+
+</div>
+
+<footer>
+  <button class="btn btn-ghost" id="btnExportar">Exportar backup (.json)</button>
+  <button class="btn btn-ghost" id="btnImportarTrigger">Importar backup</button>
+  <input type="file" id="fileImport" accept="application/json">
+</footer>
+
+<script>
+  const STORAGE_KEY = "garantias_registros_v1";
+  const EXPORT_COUNT_KEY = "garantias_ultima_exportacao_qtd";
+  let editandoId = null;
+  let fileHandleGlobal = null;
+
+  // ---------- armazenamento local (localStorage) ----------
+  function carregar(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function salvarTudo(lista){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+    escreverArquivoVinculado(); // tenta espelhar no arquivo, se houver um vinculado
+    if(autoDownloadAtivado()) baixarBackupAutomatico(); // fallback universal, funciona em qualquer navegador
+    atualizarBannerLembrete();
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function formatarDataBR(iso){ const [a,m,d] = iso.split("-"); return `${d}/${m}/${a}`; }
+  function statusGarantia(iso){
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const venc = new Date(iso + "T00:00:00");
+    const diffDias = Math.round((venc - hoje) / 86400000);
+    if(diffDias < 0) return {label:"Vencida", cls:"badge-expired"};
+    if(diffDias <= 30) return {label:`Vence em ${diffDias}d`, cls:"badge-warn"};
+    return {label:"Em garantia", cls:"badge-ok"};
+  }
+  function soDigitos(s){ return (s || "").replace(/\D/g, ""); }
+  function linkWhatsapp(fone){
+    let d = soDigitos(fone);
+    if(!d) return null;
+    if(d.length <= 11) d = "55" + d; // assume Brasil quando não tem código do país
+    return `https://wa.me/${d}`;
+  }
+  function escapeHtml(s){
+    return (s || "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  // ---------- IndexedDB: guarda a referência do arquivo vinculado ----------
+  function idbOpen(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open("garantias_db", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("kv");
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbSet(key, val){
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readwrite");
+      tx.objectStore("kv").put(val, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+  async function idbGet(key){
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readonly");
+      const r = tx.objectStore("kv").get(key);
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  async function idbDelete(key){
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("kv", "readwrite");
+      tx.objectStore("kv").delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // ---------- arquivo vinculado (File System Access API) ----------
+  const suportaArquivo = "showSaveFilePicker" in window;
+  const elDot = document.getElementById("dotArquivo");
+  const elDesc = document.getElementById("descArquivo");
+  const elTitulo = document.getElementById("tituloArquivo");
+  const btnVincular = document.getElementById("btnVincularArquivo");
+  const btnReautorizar = document.getElementById("btnReautorizar");
+  const btnDesvincular = document.getElementById("btnDesvincular");
+
+  function statusArquivo(estado, nome){
+    if(estado === "vinculado"){
+      elDot.className = "dot dot-on";
+      elTitulo.textContent = "Backup automático ativo";
+      elDesc.textContent = `Gravando automaticamente em "${nome}" a cada registro salvo.`;
+      btnVincular.hidden = true; btnReautorizar.hidden = true; btnDesvincular.hidden = false;
+    } else if(estado === "pendente"){
+      elDot.className = "dot dot-warn";
+      elTitulo.textContent = "Permissão do arquivo expirou";
+      elDesc.textContent = `Toque em "Reautorizar acesso" para continuar gravando em "${nome}".`;
+      btnVincular.hidden = true; btnReautorizar.hidden = false; btnDesvincular.hidden = false;
+    } else {
+      elDot.className = "dot dot-off";
+      elTitulo.textContent = "Backup automático em arquivo";
+      elDesc.textContent = "Vincule um arquivo .json uma vez. A partir daí, todo registro salvo aqui também é gravado automaticamente nesse arquivo.";
+      btnVincular.hidden = false; btnReautorizar.hidden = true; btnDesvincular.hidden = true;
+    }
+  }
+
+  async function vincularArquivo(){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "garantias.json",
+        types: [{ description: "Arquivo JSON", accept: { "application/json": [".json"] } }]
+      });
+      await idbSet("fileHandle", handle);
+      fileHandleGlobal = handle;
+      await escreverArquivoVinculado();
+      statusArquivo("vinculado", handle.name);
+    }catch(err){
+      if(err.name !== "AbortError") alert("Não foi possível vincular o arquivo.");
+    }
+  }
+
+  async function escreverArquivoVinculado(){
+    if(!fileHandleGlobal) return;
+    try{
+      let perm = await fileHandleGlobal.queryPermission({ mode: "readwrite" });
+      if(perm !== "granted"){
+        statusArquivo("pendente", fileHandleGlobal.name);
+        return;
+      }
+      const writable = await fileHandleGlobal.createWritable();
+      await writable.write(JSON.stringify(carregar(), null, 2));
+      await writable.close();
+    }catch(err){
+      console.error("Falha ao gravar arquivo vinculado:", err);
+    }
+  }
+
+  async function reautorizarArquivo(){
+    if(!fileHandleGlobal) return;
+    try{
+      const perm = await fileHandleGlobal.requestPermission({ mode: "readwrite" });
+      if(perm === "granted"){
+        await escreverArquivoVinculado();
+        statusArquivo("vinculado", fileHandleGlobal.name);
+      }
+    }catch(err){
+      alert("Não foi possível reautorizar o acesso ao arquivo.");
+    }
+  }
+
+  async function desvincularArquivo(){
+    fileHandleGlobal = null;
+    await idbDelete("fileHandle");
+    statusArquivo("off");
+  }
+
+  btnVincular.addEventListener("click", vincularArquivo);
+  btnReautorizar.addEventListener("click", reautorizarArquivo);
+  btnDesvincular.addEventListener("click", desvincularArquivo);
+
+  // ---------- backup automático universal (via download, funciona em qualquer navegador) ----------
+  const AUTO_DL_KEY = "garantias_auto_download_enabled";
+  const checkAutoDownload = document.getElementById("checkAutoDownload");
+  const dotAutoDownload = document.getElementById("dotAutoDownload");
+
+  function autoDownloadAtivado(){ return localStorage.getItem(AUTO_DL_KEY) === "1"; }
+  function atualizarDotAutoDownload(){
+    dotAutoDownload.className = "dot " + (autoDownloadAtivado() ? "dot-on" : "dot-off");
+  }
+  checkAutoDownload.checked = autoDownloadAtivado();
+  atualizarDotAutoDownload();
+  checkAutoDownload.addEventListener("change", () => {
+    localStorage.setItem(AUTO_DL_KEY, checkAutoDownload.checked ? "1" : "0");
+    atualizarDotAutoDownload();
+  });
+
+  function baixarBackupAutomatico(){
+    const dados = carregar();
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "garantias-auto-backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- lembrete de backup manual (quando não há arquivo vinculado) ----------
+  function atualizarBannerLembrete(){
+    const banner = document.getElementById("bannerLembrete");
+    if(fileHandleGlobal){ banner.innerHTML = ""; return; }
+    const total = carregar().length;
+    const ultimaExportacao = parseInt(localStorage.getItem(EXPORT_COUNT_KEY) || "0", 10);
+    if(total - ultimaExportacao >= 5 && total > 0){
+      banner.innerHTML = `
+        <div class="banner">
+          <span>Você tem ${total - ultimaExportacao} registro(s) novo(s) sem backup.</span>
+          <button class="btn btn-primary btn-sm" style="margin:0;width:auto;" onclick="document.getElementById('btnExportar').click()">Exportar agora</button>
+        </div>`;
+    } else {
+      banner.innerHTML = "";
+    }
+  }
+
+  // ---------- render da lista ----------
+  const elLista = document.getElementById("lista");
+  const elContagem = document.getElementById("contagem");
+  const elBusca = document.getElementById("busca");
+  const elCodigo = document.getElementById("codigo");
+  const elNome = document.getElementById("nome");
+  const elFone = document.getElementById("fone");
+  const elData = document.getElementById("data");
+  const btnSalvar = document.getElementById("btnSalvar");
+
+  function render(){
+    const termo = elBusca.value.trim().toLowerCase();
+    let dados = carregar();
+    dados.sort((a,b)=> a.data.localeCompare(b.data));
+
+    if(termo){
+      dados = dados.filter(r =>
+        r.codigo.toLowerCase().includes(termo) ||
+        r.nome.toLowerCase().includes(termo)
+      );
+    }
+
+    elContagem.textContent = `Registros (${dados.length})`;
+
+    if(dados.length === 0){
+      elLista.innerHTML = `<div class="empty">Nenhum registro encontrado.<br>Cadastre acima para começar.</div>`;
+      return;
+    }
+
+    elLista.innerHTML = dados.map(r => {
+      const st = statusGarantia(r.data);
+      const wa = linkWhatsapp(r.fone);
+      return `
+        <div class="item" data-id="${r.id}">
+          <div class="item-main">
+            <div class="item-code">${escapeHtml(r.codigo)}</div>
+            <div class="item-name">${escapeHtml(r.nome)}</div>
+            ${r.fone ? `<div class="item-phone">${escapeHtml(r.fone)}</div>` : ""}
+            <div class="item-date">Garantia até ${formatarDataBR(r.data)}</div>
+            <span class="badge ${st.cls}">${st.label}</span>
+          </div>
+          <div class="item-actions">
+            ${wa ? `<button class="icon-btn" title="Abrir WhatsApp" onclick="window.open('${wa}','_blank')">💬</button>` : ""}
+            <button class="icon-btn" title="Editar" onclick="editar('${r.id}')">✏️</button>
+            <button class="icon-btn" title="Excluir" onclick="excluir('${r.id}')">🗑️</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  btnSalvar.addEventListener("click", () => {
+    const codigo = elCodigo.value.trim();
+    const nome = elNome.value.trim();
+    const fone = elFone.value.trim();
+    const data = elData.value;
+
+    if(!codigo || !nome || !data){
+      alert("Preencha código, nome do cliente e data da garantia.");
+      return;
+    }
+
+    let dados = carregar();
+
+    if(editandoId){
+      dados = dados.map(r => r.id === editandoId ? {...r, codigo, nome, fone, data} : r);
+      editandoId = null;
+      btnSalvar.textContent = "Salvar registro";
+    } else {
+      dados.push({ id: uid(), codigo, nome, fone, data });
+    }
+
+    salvarTudo(dados);
+    elCodigo.value = ""; elNome.value = ""; elFone.value = ""; elData.value = "";
+    render();
+  });
+
+  window.editar = function(id){
+    const dados = carregar();
+    const r = dados.find(x => x.id === id);
+    if(!r) return;
+    elCodigo.value = r.codigo;
+    elNome.value = r.nome;
+    elFone.value = r.fone || "";
+    elData.value = r.data;
+    editandoId = id;
+    btnSalvar.textContent = "Atualizar registro";
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+
+  window.excluir = function(id){
+    if(!confirm("Excluir este registro?")) return;
+    let dados = carregar();
+    dados = dados.filter(x => x.id !== id);
+    salvarTudo(dados);
+    render();
+  };
+
+  elBusca.addEventListener("input", render);
+
+  // ---------- backup manual (exportar / importar .json) ----------
+  document.getElementById("btnExportar").addEventListener("click", () => {
+    const dados = carregar();
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const hoje = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `backup-garantias-${hoje}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    localStorage.setItem(EXPORT_COUNT_KEY, String(dados.length));
+    atualizarBannerLembrete();
+  });
+
+  const fileImport = document.getElementById("fileImport");
+  document.getElementById("btnImportarTrigger").addEventListener("click", () => fileImport.click());
+  fileImport.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try{
+        const importado = JSON.parse(ev.target.result);
+        if(!Array.isArray(importado)) throw new Error("formato inválido");
+        const atual = carregar();
+        const existentes = new Set(atual.map(r => r.id));
+        const novos = importado.filter(r => r && r.id && !existentes.has(r.id));
+        salvarTudo([...atual, ...novos]);
+        render();
+        alert(`Importação concluída. ${novos.length} registro(s) adicionado(s).`);
+      }catch(err){
+        alert("Não foi possível importar este arquivo. Verifique se é um backup válido.");
+      }
+      fileImport.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------- inicialização ----------
+  (async function init(){
+    if(suportaArquivo){
+      document.getElementById("blocoArquivo").hidden = false;
+      try{
+        const handle = await idbGet("fileHandle");
+        if(handle){
+          fileHandleGlobal = handle;
+          const perm = await handle.queryPermission({ mode: "readwrite" });
+          statusArquivo(perm === "granted" ? "vinculado" : "pendente", handle.name);
+        }
+      }catch(e){ /* sem arquivo vinculado ainda */ }
+    } else {
+      document.getElementById("blocoArquivoNaoSuportado").hidden = false;
+    }
+    atualizarBannerLembrete();
+    render();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+GERAR APK PELO GITHUB ACTIONS
+=============================
+
+Esta opção permite gerar o APK sem instalar o Android Studio no seu computador.
+
+PASSO A PASSO
+-------------
+
+1) Crie um repositório no GitHub.
+   Pode ser privado.
+
+2) Extraia este ZIP no seu computador.
+
+3) Envie para o repositório todos os arquivos e pastas que estão dentro da pasta:
+   ControleLacresGarantia
+
+   Atenção: envie também a pasta oculta:
+   .github/workflows/build-apk.yml
+
+4) No GitHub, abra o repositório.
+
+5) Clique na aba:
+   Actions
+
+6) Clique no workflow:
+   Gerar APK Android
+
+7) Clique em:
+   Run workflow
+
+8) Aguarde a execução terminar.
+
+9) No final da execução, baixe o arquivo em:
+   Artifacts > ControleLacresGarantia-debug-apk
+
+10) O APK estará dentro do ZIP baixado pelo GitHub.
+    Normalmente o nome será algo como:
+    app-debug.apk
+
+OBSERVAÇÕES IMPORTANTES
+-----------------------
+
+- Esse APK é uma versão debug, boa para teste e instalação manual.
+- Para vender/distribuir de forma profissional, o ideal é gerar um APK release assinado.
+- Para publicar na Play Store, o recomendado é gerar AAB assinado.
+- A versão debug pode ser instalada no Android permitindo instalação de apps de fontes desconhecidas.
+
+O workflow usa:
+- Ubuntu 24.04 no GitHub Actions
+- Java 17
+- Gradle 8.7
+- Android Gradle Plugin 8.6.1
+- compileSdk 35

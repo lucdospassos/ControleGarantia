@@ -1,0 +1,15 @@
+[
+  {
+    "id": "exemplo-001",
+    "numero_lacre": "10025",
+    "cliente": "João Silva",
+    "telefone": "(81) 99999-9999",
+    "data_cadastro": "2026-07-05",
+    "tipo_garantia": "dias",
+    "dias_garantia": 90,
+    "data_vencimento": "2026-10-03",
+    "observacao": "Troca de tela do celular",
+    "criado_em": "2026-07-05T05:49:00-0300",
+    "atualizado_em": "2026-07-05T05:49:00-0300"
+  }
+]
