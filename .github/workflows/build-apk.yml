@@ -3,13 +3,17 @@ name: Gerar APK Android
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
 
 jobs:
   build:
-    name: Compilar APK Debug
-    runs-on: ubuntu-latest
+    name: Compilar APK Android
+    runs-on: ubuntu-24.04
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
 
     steps:
       - name: Baixar código do repositório
@@ -21,19 +25,43 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Configurar Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.7
+          gradle-version: '8.7'
 
-      - name: Compilar APK
+      - name: Instalar plataforma Android necessária
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Compilar APK Debug
         run: gradle assembleDebug --no-daemon
 
-      - name: Enviar APK como artifact
+      - name: Enviar APK Debug como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ControleGarantia-debug-apk
+          name: ControleLacresGarantia-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Preparar chave de assinatura Release
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > release-key.jks
+
+      - name: Compilar APK Release assinado
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        run: |
+          gradle assembleRelease --no-daemon \
+            -PRELEASE_STORE_PASSWORD="$RELEASE_STORE_PASSWORD" \
+            -PRELEASE_KEY_ALIAS="$RELEASE_KEY_ALIAS" \
+            -PRELEASE_KEY_PASSWORD="$RELEASE_KEY_PASSWORD"
+
+      - name: Enviar APK Release assinado como artifact
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ControleLacresGarantia-release-assinado-apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
