@@ -1,0 +1,20 @@
+Controle de Lacres e Garantias - v1.5.0
+
+Versão marcada como estável para distribuição inicial.
+
+Novidades:
+- Ícone próprio do aplicativo criado e configurado no AndroidManifest.
+- Versão atualizada para 1.5.0, versionCode 5.
+- Botão de compra atualizado para exibir: Comprar lacres: (81) 98849-6130.
+- Lista de registros agora tem paginação.
+- Por padrão, a lista mostra 5 registros por página.
+- O usuário pode escolher mostrar 5, 10, 20, 50 registros por página ou todos.
+- Workflow do GitHub Actions atualizado para gerar APK debug e APK release assinado.
+- Workflow atualizado para actions/checkout@v6, actions/setup-java@v5, gradle/actions/setup-gradle@v5 e actions/upload-artifact@v6.
+- Incluído script Windows para gerar chave release .jks e Base64 para GitHub Secrets.
+- Incluído arquivo de instruções específico para release assinado.
+
+Observações:
+- Os dados continuam no SQLite local do celular.
+- O backup/restauração continua em JSON.
+- A assinatura release depende dos Secrets cadastrados no GitHub.

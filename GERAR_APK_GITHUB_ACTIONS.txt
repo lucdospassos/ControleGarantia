@@ -1,33 +1,21 @@
 GERAR APK PELO GITHUB ACTIONS
 
-1. Envie todos os arquivos desta pasta para o GitHub, mantendo a estrutura:
+1. Envie/substitua os arquivos deste projeto no repositório GitHub.
+2. Confira se existe:
 
-.github/workflows/build-apk.yml
-app/
-docs/
-web/
-build.gradle
-settings.gradle
-README.txt
+   .github/workflows/build-apk.yml
 
-2. No GitHub, abra:
-Actions > Gerar APK Android
+3. Vá em:
 
-3. Clique em:
-Run workflow
+   Actions > Gerar APK Android > Run workflow
 
-4. Quando terminar, baixe o artifact:
-ControleLacresGarantia-debug-apk
+4. Se não houver secrets de assinatura, será gerado apenas o APK debug:
 
-Dentro estará o APK debug, bom para teste.
+   ControleLacresGarantia-v1.5-debug-apk
 
-5. Para gerar o APK release assinado, configure os Secrets descritos em:
+5. Se os 4 secrets de assinatura estiverem configurados, também será gerado:
+
+   ControleLacresGarantia-v1.5-release-assinado-apk
+
+Para configurar a versão release assinada, leia:
 CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt
-
-Depois rode o mesmo workflow novamente.
-Quando a assinatura estiver configurada, o GitHub também vai gerar o artifact:
-ControleLacresGarantia-release-assinado-apk
-
-Observação:
-- O APK debug é para testes.
-- O APK release assinado é o recomendado para entregar aos clientes.

@@ -59,9 +59,18 @@ public class MainActivity extends Activity {
     private Spinner spFiltro;
     private LinearLayout listaContainer;
     private TextView lblContagem;
+    private Spinner spRegistrosPorPagina;
+    private TextView lblPaginaInfo;
+    private Button btnPaginaAnterior;
+    private Button btnPaginaProxima;
+    private int paginaAtual = 1;
+    private int registrosPorPagina = 5;
+
 
     private final String[] filtroLabels = {"Todos", "Em garantia", "Vencendo em até 30 dias", "Vencidos"};
     private final String[] filtroKeys = {"todos", "vigentes", "proximos", "vencidos"};
+    private final String[] paginaLabels = {"5 por página", "10 por página", "20 por página", "50 por página", "Todos"};
+    private final int[] paginaValores = {5, 10, 20, 50, 0};
     private String filtroAtual = "todos";
 
     @Override
@@ -94,7 +103,7 @@ public class MainActivity extends Activity {
         titulo.setPadding(dp(16), dp(18), dp(16), dp(4));
 
         TextView subtitulo = new TextView(this);
-        subtitulo.setText("Funciona offline. Os dados ficam gravados no banco local do celular e podem ser exportados em JSON.");
+        subtitulo.setText("Funciona offline. Os dados ficam gravados no banco local do celular e podem ser exportados em JSON. Versão estável 1.5.");
         subtitulo.setTextColor(Color.rgb(207, 227, 220));
         subtitulo.setTextSize(13);
         subtitulo.setPadding(dp(16), 0, dp(16), dp(18));
@@ -106,7 +115,7 @@ public class MainActivity extends Activity {
         header.addView(subtitulo);
         root.addView(header, matchWrap());
 
-        Button btnComprarLacre = button("Comprar Lacre de garantia", true);
+        Button btnComprarLacre = button("Comprar lacres: (81) 98849-6130", true);
         btnComprarLacre.setOnClickListener(v -> abrirCompraLacre());
         root.addView(btnComprarLacre, matchWrapTop(dp(10)));
 
@@ -177,7 +186,7 @@ public class MainActivity extends Activity {
 
         LinearLayout cardBusca = card();
         txtBusca = editText("Buscar por lacre, cliente ou telefone", InputType.TYPE_CLASS_TEXT);
-        txtBusca.addTextChangedListener(simpleWatcher(() -> renderizarLista()));
+        txtBusca.addTextChangedListener(simpleWatcher(() -> { paginaAtual = 1; renderizarLista(); }));
         spFiltro = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroLabels);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -185,6 +194,7 @@ public class MainActivity extends Activity {
         spFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 filtroAtual = filtroKeys[position];
+                paginaAtual = 1;
                 renderizarLista();
             }
             @Override public void onNothingSelected(AdapterView<?> parent) { }
@@ -210,16 +220,65 @@ public class MainActivity extends Activity {
         botoesBackup.addView(btnImportar, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         root.addView(botoesBackup, matchWrapTop(dp(12)));
 
+        LinearLayout headerRegistros = new LinearLayout(this);
+        headerRegistros.setOrientation(LinearLayout.HORIZONTAL);
+        headerRegistros.setGravity(Gravity.CENTER_VERTICAL);
+        headerRegistros.setPadding(dp(4), dp(18), dp(4), dp(8));
+
         lblContagem = new TextView(this);
         lblContagem.setTextColor(Color.rgb(91, 100, 114));
         lblContagem.setTypeface(Typeface.DEFAULT_BOLD);
         lblContagem.setTextSize(13);
-        lblContagem.setPadding(dp(4), dp(18), dp(4), dp(8));
-        root.addView(lblContagem, matchWrap());
+        headerRegistros.addView(lblContagem, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+
+        spRegistrosPorPagina = new Spinner(this);
+        ArrayAdapter<String> adapterPaginas = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paginaLabels);
+        adapterPaginas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spRegistrosPorPagina.setAdapter(adapterPaginas);
+        spRegistrosPorPagina.setSelection(0);
+        spRegistrosPorPagina.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                registrosPorPagina = paginaValores[position];
+                paginaAtual = 1;
+                renderizarLista();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+        headerRegistros.addView(spRegistrosPorPagina, new LinearLayout.LayoutParams(dp(165), ViewGroup.LayoutParams.WRAP_CONTENT));
+        root.addView(headerRegistros, matchWrap());
 
         listaContainer = new LinearLayout(this);
         listaContainer.setOrientation(LinearLayout.VERTICAL);
         root.addView(listaContainer, matchWrap());
+
+        LinearLayout controlesPagina = new LinearLayout(this);
+        controlesPagina.setOrientation(LinearLayout.HORIZONTAL);
+        controlesPagina.setGravity(Gravity.CENTER_VERTICAL);
+        controlesPagina.setPadding(0, dp(8), 0, 0);
+
+        btnPaginaAnterior = button("Anterior", false);
+        btnPaginaAnterior.setOnClickListener(v -> {
+            if (paginaAtual > 1) {
+                paginaAtual--;
+                renderizarLista();
+            }
+        });
+
+        lblPaginaInfo = new TextView(this);
+        lblPaginaInfo.setTextColor(Color.rgb(91, 100, 114));
+        lblPaginaInfo.setTextSize(13);
+        lblPaginaInfo.setGravity(Gravity.CENTER);
+
+        btnPaginaProxima = button("Próxima", false);
+        btnPaginaProxima.setOnClickListener(v -> {
+            paginaAtual++;
+            renderizarLista();
+        });
+
+        controlesPagina.addView(btnPaginaAnterior, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        controlesPagina.addView(lblPaginaInfo, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        controlesPagina.addView(btnPaginaProxima, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        root.addView(controlesPagina, matchWrap());
 
         txtDias.addTextChangedListener(simpleWatcher(() -> atualizarVencimentoCalculado()));
         txtDataCadastro.addTextChangedListener(simpleWatcher(() -> atualizarVencimentoCalculado()));
@@ -379,9 +438,12 @@ public class MainActivity extends Activity {
         if (listaContainer == null) return;
         String termo = txtBusca == null ? "" : txtBusca.getText().toString();
         List<Registro> registros = db.search(termo, filtroAtual);
-        lblContagem.setText("Registros (" + registros.size() + ")");
+        int total = registros.size();
+        lblContagem.setText("Registros (" + total + ")");
         listaContainer.removeAllViews();
-        if (registros.isEmpty()) {
+
+        if (total == 0) {
+            atualizarControlesPaginacao(0, 0, 0, 1);
             TextView vazio = new TextView(this);
             vazio.setText("Nenhum registro encontrado.\nCadastre acima para começar.");
             vazio.setTextColor(Color.rgb(91, 100, 114));
@@ -391,9 +453,47 @@ public class MainActivity extends Activity {
             listaContainer.addView(vazio, matchWrap());
             return;
         }
-        for (Registro r : registros) {
-            listaContainer.addView(cardRegistro(r), matchWrapTop(dp(10)));
+
+        int totalPaginas;
+        int inicio;
+        int fim;
+        if (registrosPorPagina <= 0) {
+            totalPaginas = 1;
+            paginaAtual = 1;
+            inicio = 0;
+            fim = total;
+        } else {
+            totalPaginas = Math.max(1, (int) Math.ceil(total / (double) registrosPorPagina));
+            if (paginaAtual < 1) paginaAtual = 1;
+            if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+            inicio = (paginaAtual - 1) * registrosPorPagina;
+            fim = Math.min(inicio + registrosPorPagina, total);
         }
+
+        for (int i = inicio; i < fim; i++) {
+            listaContainer.addView(cardRegistro(registros.get(i)), matchWrapTop(dp(10)));
+        }
+
+        atualizarControlesPaginacao(total, inicio + 1, fim, totalPaginas);
+    }
+
+    private void atualizarControlesPaginacao(int total, int inicioExibido, int fimExibido, int totalPaginas) {
+        if (lblPaginaInfo == null || btnPaginaAnterior == null || btnPaginaProxima == null) return;
+        if (total == 0) {
+            lblPaginaInfo.setText("");
+            btnPaginaAnterior.setEnabled(false);
+            btnPaginaProxima.setEnabled(false);
+            return;
+        }
+        if (registrosPorPagina <= 0) {
+            lblPaginaInfo.setText("Todos: " + total);
+            btnPaginaAnterior.setEnabled(false);
+            btnPaginaProxima.setEnabled(false);
+            return;
+        }
+        lblPaginaInfo.setText("Pág. " + paginaAtual + "/" + totalPaginas + "\n" + inicioExibido + "-" + fimExibido);
+        btnPaginaAnterior.setEnabled(paginaAtual > 1);
+        btnPaginaProxima.setEnabled(paginaAtual < totalPaginas);
     }
 
     private View cardRegistro(Registro r) {

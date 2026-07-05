@@ -1,39 +1,32 @@
-Controle de Lacres e Garantias - Android Offline
-Versão: 1.1.0
+Controle de Lacres e Garantias - v1.5.0 estável
 
-Aplicativo Android offline para registrar uso de lacres de garantia.
+Aplicativo Android offline para controle de lacres de garantia.
 
-Recursos principais:
+Funcionalidades principais:
 - Cadastro de número do lacre.
-- Aceita letras e números no lacre.
-- Converte o lacre automaticamente para maiúsculo.
-- Remove espaços em branco do lacre automaticamente.
-- Nome do cliente.
-- Telefone / WhatsApp.
-- Data da compra/cadastro no padrão brasileiro DD/MM/AAAA.
-- Garantia por quantidade de dias.
-- Garantia por data específica.
-- Cálculo automático da data final da garantia.
-- Campo de observação.
+- Número do lacre aceita letras e números, converte para maiúsculo e remove espaços.
+- Cadastro de cliente, telefone/WhatsApp, data da compra/cadastro e observação.
+- Garantia por quantidade de dias ou por data específica.
+- Cálculo automático do vencimento.
 - Busca por lacre, cliente ou telefone.
-- Filtros: todos, em garantia, vencendo em até 30 dias, vencidos.
-- Edição e exclusão de registros.
-- Não permite repetir o mesmo lacre dentro do celular.
-- Banco SQLite local no próprio aparelho.
-- Exportação/importação de backup JSON.
-- Botão "Comprar Lacre de garantia" apontando para o WhatsApp 81988496130.
+- Filtros: todos, em garantia, vencendo em até 30 dias e vencidos.
+- Paginação da lista de registros: padrão 5 por página, com opções 5, 10, 20, 50 e todos.
+- Bloqueio de lacre repetido dentro do celular.
+- Dados salvos no banco SQLite local do Android.
+- Exportação e importação em JSON.
+- Botão Comprar lacres: (81) 98849-6130 via WhatsApp.
+- Ícone próprio do aplicativo.
+- Workflow GitHub Actions para APK debug e release assinado.
 
 Arquivos importantes:
-- app/: projeto Android.
-- web/controle-lacres-offline.html: versão HTML simples de teste.
-- .github/workflows/build-apk.yml: workflow do GitHub Actions.
-- GERAR_APK_GITHUB_ACTIONS.txt: instruções para gerar APK debug.
-- CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt: instruções para gerar APK release assinado.
-- CHANGELOG_v1.1.0.txt: resumo das mudanças desta versão.
+- .github/workflows/build-apk.yml
+- CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt
+- scripts/gerar_chave_release_windows.bat
+- docs/icone-controle-lacres-v1.5.png
 
-Observações:
-- O banco SQLite fica dentro da área privada do app no Android.
-- Os dados permanecem ao fechar, desligar ou reiniciar o celular.
-- Os dados podem ser apagados se o usuário desinstalar o app, limpar dados do app ou restaurar o celular.
-- Use o botão Exportar JSON para criar backups.
-- Antes de atualizar o app em aparelhos com dados reais, exporte um backup JSON.
+Para gerar o APK debug:
+Actions > Gerar APK Android > Run workflow
+Baixe o artifact ControleLacresGarantia-v1.5-debug-apk.
+
+Para gerar o APK release assinado:
+Leia CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt.

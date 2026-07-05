@@ -1,18 +1,11 @@
-GERAR APK PELO ANDROID STUDIO
+GERAR APK LOCALMENTE
 
-1. Abra o Android Studio.
-2. File > Open.
-3. Selecione a pasta ControleLacresGarantia.
-4. Aguarde sincronizar o Gradle.
-5. Para teste:
-   Build > Build Bundle(s) / APK(s) > Build APK(s)
-6. O APK debug ficará em:
-   app/build/outputs/apk/debug/app-debug.apk
+Opção com Android Studio:
+1. Abra a pasta ControleLacresGarantia no Android Studio.
+2. Aguarde sincronizar.
+3. Build > Build Bundle(s) / APK(s) > Build APK(s).
 
-Para APK release assinado pelo Android Studio:
-1. Build > Generate Signed Bundle / APK.
-2. Escolha APK.
-3. Use ou crie uma chave .jks.
-4. Gere a versão release.
+Opção recomendada sem Android Studio:
+Use o GitHub Actions conforme GERAR_APK_GITHUB_ACTIONS.txt.
 
-Sem Android Studio, use o GitHub Actions conforme GERAR_APK_GITHUB_ACTIONS.txt.
+Versão do projeto: 1.5.0 estável.

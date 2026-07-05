@@ -3,6 +3,25 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:fillColor="#1F6F5C" android:pathData="M16,16h76a8,8 0,0 1,8 8v60a8,8 0,0 1,-8 8H16a8,8 0,0 1,-8 -8V24a8,8 0,0 1,8 -8z"/>
-    <path android:fillColor="#FFFFFF" android:pathData="M28,32h52v8H28zM28,50h52v8H28zM28,68h35v8H28z"/>
+
+    <!-- Ícone: lacre/etiqueta de garantia com marca de conferência -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,20h36l16,16v48c0,4.4 -3.6,8 -8,8H34c-4.4,0 -8,-3.6 -8,-8V24c0,-2.2 1.8,-4 4,-4z" />
+
+    <path
+        android:fillColor="#CFE3DC"
+        android:pathData="M66,20v16h16z" />
+
+    <path
+        android:fillColor="#164F41"
+        android:pathData="M39,39m-7,0a7,7 0,1 0,14 0a7,7 0,1 0,-14 0" />
+
+    <path
+        android:fillColor="#1F6F5C"
+        android:pathData="M49,37h18v5H49zM36,55h36v6H36zM36,67h26v6H36z" />
+
+    <path
+        android:fillColor="#164F41"
+        android:pathData="M47,83l-9,-9l4.8,-4.8l4.2,4.2l13.7,-15.4l5.1,4.6z" />
 </vector>
