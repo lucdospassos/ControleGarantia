@@ -2,12 +2,6 @@ plugins {
     id 'com.android.application'
 }
 
-def releaseKeystoreFile = rootProject.file("release-key.jks")
-def releaseStorePassword = project.findProperty("RELEASE_STORE_PASSWORD") ?: System.getenv("RELEASE_STORE_PASSWORD")
-def releaseKeyAlias = project.findProperty("RELEASE_KEY_ALIAS") ?: System.getenv("RELEASE_KEY_ALIAS")
-def releaseKeyPassword = project.findProperty("RELEASE_KEY_PASSWORD") ?: System.getenv("RELEASE_KEY_PASSWORD")
-def hasReleaseSigning = releaseKeystoreFile.exists() && releaseStorePassword && releaseKeyAlias && releaseKeyPassword
-
 android {
     namespace 'br.com.passosbrindes.controlelacres'
     compileSdk 35
@@ -27,26 +21,22 @@ android {
 
     signingConfigs {
         release {
-            if (hasReleaseSigning) {
-                storeFile releaseKeystoreFile
-                storeType 'JKS'
-                storePassword releaseStorePassword
-                keyAlias releaseKeyAlias
-                keyPassword releaseKeyPassword
-            }
+            storeFile file(System.getenv("RELEASE_STORE_FILE") ?: "release-key.jks")
+            storePassword System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword System.getenv("RELEASE_KEY_PASSWORD")
         }
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            shrinkResources false
-            if (hasReleaseSigning) {
-                signingConfig signingConfigs.release
-            }
-        }
         debug {
             debuggable true
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
