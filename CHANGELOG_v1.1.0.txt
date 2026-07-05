@@ -1,0 +1,28 @@
+Controle de Lacres e Garantias - v1.1.0
+
+Melhorias desta versão:
+
+1. Número do lacre
+   - Aceita letras e números.
+   - Converte automaticamente para letras maiúsculas.
+   - Remove espaços em branco automaticamente.
+   - Exemplos válidos: A01567, PB10025, LACRE-000123.
+
+2. Datas
+   - Campos de data agora exibem no padrão brasileiro: DD/MM/AAAA.
+   - O banco continua armazenando internamente em formato ISO para manter ordenação e filtros corretos.
+
+3. WhatsApp de compra
+   - Adicionado botão/link: "Comprar Lacre de garantia".
+   - Número configurado: 81988496130.
+   - O app abre o WhatsApp em: 55 81 98849-6130.
+
+4. Release assinado
+   - O projeto foi preparado para gerar APK release assinado pelo GitHub Actions.
+   - Por segurança, a chave de assinatura não foi colocada dentro do repositório/ZIP.
+   - Configure os Secrets do GitHub conforme o arquivo CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt.
+
+Observação importante:
+- O banco SQLite local é mantido na atualização do app enquanto o applicationId continuar o mesmo:
+  br.com.passosbrindes.controlelacres
+- Ainda assim, antes de atualizar o app de teste, exporte um backup JSON por segurança.

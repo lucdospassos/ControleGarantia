@@ -1,107 +1,39 @@
-CONTROLE DE LACRES E GARANTIAS - APP ANDROID OFFLINE
-======================================================
+Controle de Lacres e Garantias - Android Offline
+Versão: 1.1.0
 
-Este pacote contém uma primeira versão do aplicativo Android offline para controle de lacres e garantias.
+Aplicativo Android offline para registrar uso de lacres de garantia.
 
-O que foi criado:
+Recursos principais:
+- Cadastro de número do lacre.
+- Aceita letras e números no lacre.
+- Converte o lacre automaticamente para maiúsculo.
+- Remove espaços em branco do lacre automaticamente.
+- Nome do cliente.
+- Telefone / WhatsApp.
+- Data da compra/cadastro no padrão brasileiro DD/MM/AAAA.
+- Garantia por quantidade de dias.
+- Garantia por data específica.
+- Cálculo automático da data final da garantia.
+- Campo de observação.
+- Busca por lacre, cliente ou telefone.
+- Filtros: todos, em garantia, vencendo em até 30 dias, vencidos.
+- Edição e exclusão de registros.
+- Não permite repetir o mesmo lacre dentro do celular.
+- Banco SQLite local no próprio aparelho.
+- Exportação/importação de backup JSON.
+- Botão "Comprar Lacre de garantia" apontando para o WhatsApp 81988496130.
 
-1) Projeto Android Studio nativo em Java
-   Pasta: app/
-   Pacote: br.com.passosbrindes.controlelacres
-   Nome do app: Controle de Lacres
+Arquivos importantes:
+- app/: projeto Android.
+- web/controle-lacres-offline.html: versão HTML simples de teste.
+- .github/workflows/build-apk.yml: workflow do GitHub Actions.
+- GERAR_APK_GITHUB_ACTIONS.txt: instruções para gerar APK debug.
+- CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt: instruções para gerar APK release assinado.
+- CHANGELOG_v1.1.0.txt: resumo das mudanças desta versão.
 
-2) Banco local SQLite
-   O aplicativo grava os registros no banco interno do celular.
-   O número do lacre é único dentro do aparelho, então o app não permite cadastrar o mesmo lacre duas vezes.
-
-3) Backup e restauração em JSON
-   O app usa SQLite como armazenamento principal.
-   O JSON é usado para exportar e importar backup.
-
-4) Versão HTML de teste
-   Arquivo: web/controle-lacres-offline.html
-   Essa versão serve apenas para testar a lógica e a tela no navegador.
-   O app Android final usa SQLite; o HTML usa localStorage.
-
-CAMPOS DO CADASTRO
-==================
-
-- Número do lacre
-- Nome do cliente
-- Telefone / WhatsApp
-- Data da compra / cadastro
-- Tipo de garantia:
-  - Por quantidade de dias
-  - Por data específica
-- Quantidade de dias da garantia
-- Data final da garantia
-- Observação
-
-RECURSOS JÁ INCLUÍDOS
-=====================
-
-- Cadastro de lacres
-- Edição de registro
-- Exclusão de registro
-- Busca por lacre, cliente ou telefone
-- Filtros:
-  - Todos
-  - Em garantia
-  - Vencendo em até 30 dias
-  - Vencidos
-- Cálculo automático do vencimento quando a garantia é por dias
-- Data atual preenchida automaticamente no cadastro
-- Botão de WhatsApp quando houver telefone
-- Exportação de backup JSON
-- Importação de backup JSON
-- Bloqueio de lacre repetido dentro do celular
-- Funcionamento offline
-
-COMO GERAR O APK NO ANDROID STUDIO
-==================================
-
-1. Extraia este ZIP no seu computador.
-2. Abra o Android Studio.
-3. Clique em: File > Open.
-4. Selecione a pasta ControleLacresGarantia.
-5. Aguarde o Android Studio baixar/sincronizar o Gradle e o Android SDK, se necessário.
-6. Clique em: Build > Build Bundle(s) / APK(s) > Build APK(s).
-7. O APK será gerado normalmente em:
-   app/build/outputs/apk/debug/app-debug.apk
-
-COMO INSTALAR NO CELULAR
-========================
-
-1. Copie o app-debug.apk para o celular.
-2. Abra o arquivo no Android.
-3. Se o Android pedir, permita instalar apps de fontes desconhecidas.
-4. Instale o aplicativo.
-
-IMPORTANTE
-==========
-
-Este ambiente do ChatGPT não possui Android SDK/Gradle instalado, por isso o APK final não foi compilado aqui.
-O projeto está pronto para ser aberto e compilado no Android Studio.
-
-RECOMENDAÇÃO PARA PRÓXIMA ETAPA
-===============================
-
-Antes de distribuir para clientes, recomendo testar em 1 ou 2 celulares Android reais e depois ajustar:
-
-- Nome final do app
-- Ícone final
-- Cores e logomarca da sua empresa
-- Tela de boas-vindas com instruções
-- Possível campo de número da OS ou nome do produto/serviço
-- Exportação automática de backup em intervalos
-- Proteção com senha, se desejar
-
-GERAR APK SEM ANDROID STUDIO
-----------------------------
-
-Também foi incluído um workflow do GitHub Actions para gerar o APK pela nuvem.
-Arquivo:
-.github/workflows/build-apk.yml
-
-Veja as instruções completas em:
-GERAR_APK_GITHUB_ACTIONS.txt
+Observações:
+- O banco SQLite fica dentro da área privada do app no Android.
+- Os dados permanecem ao fechar, desligar ou reiniciar o celular.
+- Os dados podem ser apagados se o usuário desinstalar o app, limpar dados do app ou restaurar o celular.
+- Use o botão Exportar JSON para criar backups.
+- Antes de atualizar o app em aparelhos com dados reais, exporte um backup JSON.

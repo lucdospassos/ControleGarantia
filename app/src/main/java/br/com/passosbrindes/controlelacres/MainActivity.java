@@ -106,11 +106,16 @@ public class MainActivity extends Activity {
         header.addView(subtitulo);
         root.addView(header, matchWrap());
 
+        Button btnComprarLacre = button("Comprar Lacre de garantia", true);
+        btnComprarLacre.setOnClickListener(v -> abrirCompraLacre());
+        root.addView(btnComprarLacre, matchWrapTop(dp(10)));
+
         LinearLayout cardCadastro = card();
-        txtLacre = editText("Ex: 10025", InputType.TYPE_CLASS_TEXT);
+        txtLacre = editText("Ex: A01567", InputType.TYPE_CLASS_TEXT);
+        instalarNormalizacaoLacre();
         txtCliente = editText("Ex: Maria Souza", InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         txtTelefone = editText("Ex: (81) 99999-9999", InputType.TYPE_CLASS_PHONE);
-        txtDataCadastro = editText("AAAA-MM-DD", InputType.TYPE_NULL);
+        txtDataCadastro = editText("DD/MM/AAAA", InputType.TYPE_NULL);
         txtDataCadastro.setFocusable(false);
         txtDataCadastro.setOnClickListener(v -> escolherData(txtDataCadastro));
 
@@ -140,7 +145,7 @@ public class MainActivity extends Activity {
         cardCadastro.addView(grupo);
 
         txtDias = editText("Ex: 90", InputType.TYPE_CLASS_NUMBER);
-        txtDataVencimento = editText("AAAA-MM-DD", InputType.TYPE_NULL);
+        txtDataVencimento = editText("DD/MM/AAAA", InputType.TYPE_NULL);
         txtDataVencimento.setFocusable(false);
         txtDataVencimento.setOnClickListener(v -> escolherData(txtDataVencimento));
         lblVencimentoCalculado = new TextView(this);
@@ -224,7 +229,7 @@ public class MainActivity extends Activity {
     }
 
     private void preencherDataHoje() {
-        txtDataCadastro.setText(DateUtils.todayIso());
+        txtDataCadastro.setText(DateUtils.toBrDate(DateUtils.todayIso()));
         txtDias.setText("90");
         atualizarVencimentoCalculado();
     }
@@ -247,7 +252,7 @@ public class MainActivity extends Activity {
 
     private String calcularVencimento() {
         if (rbDias.isChecked()) {
-            String base = txtDataCadastro.getText().toString().trim();
+            String base = DateUtils.toIsoDate(txtDataCadastro.getText().toString().trim());
             String diasTxt = txtDias.getText().toString().trim();
             if (base.isEmpty() || diasTxt.isEmpty()) return null;
             try {
@@ -257,7 +262,7 @@ public class MainActivity extends Activity {
                 return null;
             }
         }
-        return txtDataVencimento.getText().toString().trim();
+        return DateUtils.toIsoDate(txtDataVencimento.getText().toString().trim());
     }
 
     private String statusPorData(String iso) {
@@ -268,10 +273,11 @@ public class MainActivity extends Activity {
     }
 
     private void salvarRegistro() {
-        String lacre = txtLacre.getText().toString().trim();
+        String lacre = DateUtils.normalizarLacre(txtLacre.getText().toString());
+        txtLacre.setText(lacre);
         String cliente = txtCliente.getText().toString().trim();
         String telefone = txtTelefone.getText().toString().trim();
-        String dataCadastro = txtDataCadastro.getText().toString().trim();
+        String dataCadastro = DateUtils.toIsoDate(txtDataCadastro.getText().toString().trim());
         String observacao = txtObservacao.getText().toString().trim();
         String vencimento = calcularVencimento();
 
@@ -328,7 +334,7 @@ public class MainActivity extends Activity {
         txtCliente.setText("");
         txtTelefone.setText("");
         txtObservacao.setText("");
-        txtDataCadastro.setText(DateUtils.todayIso());
+        txtDataCadastro.setText(DateUtils.toBrDate(DateUtils.todayIso()));
         rbDias.setChecked(true);
         txtDias.setText("90");
         txtDataVencimento.setText("");
@@ -341,7 +347,7 @@ public class MainActivity extends Activity {
         txtLacre.setText(r.numeroLacre);
         txtCliente.setText(r.cliente);
         txtTelefone.setText(r.telefone == null ? "" : r.telefone);
-        txtDataCadastro.setText(r.dataCadastro);
+        txtDataCadastro.setText(DateUtils.toBrDate(r.dataCadastro));
         txtObservacao.setText(r.observacao == null ? "" : r.observacao);
         if ("dias".equals(r.tipoGarantia)) {
             rbDias.setChecked(true);
@@ -349,7 +355,7 @@ public class MainActivity extends Activity {
             txtDataVencimento.setText("");
         } else {
             rbData.setChecked(true);
-            txtDataVencimento.setText(r.dataVencimento);
+            txtDataVencimento.setText(DateUtils.toBrDate(r.dataVencimento));
         }
         btnSalvar.setText("Atualizar registro");
         atualizarModoGarantia();
@@ -455,6 +461,31 @@ public class MainActivity extends Activity {
         return Color.rgb(22, 79, 65);
     }
 
+    private void instalarNormalizacaoLacre() {
+        txtLacre.addTextChangedListener(new TextWatcher() {
+            private boolean atualizando = false;
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (atualizando) return;
+                String original = s.toString();
+                String normalizado = DateUtils.normalizarLacre(original);
+                if (!original.equals(normalizado)) {
+                    atualizando = true;
+                    txtLacre.setText(normalizado);
+                    txtLacre.setSelection(txtLacre.getText().length());
+                    atualizando = false;
+                }
+            }
+        });
+    }
+
+    private void abrirCompraLacre() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/5581988496130?text=Ol%C3%A1%2C%20gostaria%20de%20comprar%20lacre%20de%20garantia."));
+        try { startActivity(intent); }
+        catch (Exception e) { aviso("Não foi possível abrir o WhatsApp de compra."); }
+    }
+
     private void abrirWhatsApp(String telefone) {
         String digitos = telefone == null ? "" : telefone.replaceAll("\\D", "");
         if (digitos.isEmpty()) {
@@ -527,15 +558,16 @@ public class MainActivity extends Activity {
     private void escolherData(EditText target) {
         Calendar c = Calendar.getInstance();
         String val = target.getText().toString().trim();
-        if (val.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        String isoAtual = DateUtils.toIsoDate(val);
+        if (isoAtual.matches("\\d{4}-\\d{2}-\\d{2}")) {
             try {
-                String[] p = val.split("-");
+                String[] p = isoAtual.split("-");
                 c.set(Integer.parseInt(p[0]), Integer.parseInt(p[1]) - 1, Integer.parseInt(p[2]));
             } catch (Exception ignored) {}
         }
         DatePickerDialog dlg = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
             String iso = String.format(java.util.Locale.US, "%04d-%02d-%02d", year, month + 1, dayOfMonth);
-            target.setText(iso);
+            target.setText(DateUtils.toBrDate(iso));
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         dlg.show();
     }

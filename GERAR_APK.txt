@@ -1,14 +1,18 @@
-PASSO A PASSO RÁPIDO PARA GERAR O APK
-=====================================
+GERAR APK PELO ANDROID STUDIO
 
-1) Instale o Android Studio no Windows.
-2) Extraia o ZIP deste projeto.
-3) Abra a pasta ControleLacresGarantia no Android Studio.
-4) Aguarde a sincronização do Gradle.
-5) Vá em:
+1. Abra o Android Studio.
+2. File > Open.
+3. Selecione a pasta ControleLacresGarantia.
+4. Aguarde sincronizar o Gradle.
+5. Para teste:
    Build > Build Bundle(s) / APK(s) > Build APK(s)
-6) Pegue o APK em:
+6. O APK debug ficará em:
    app/build/outputs/apk/debug/app-debug.apk
 
-Para testar rapidamente a tela sem Android Studio:
-- Abra o arquivo web/controle-lacres-offline.html no navegador.
+Para APK release assinado pelo Android Studio:
+1. Build > Generate Signed Bundle / APK.
+2. Escolha APK.
+3. Use ou crie uma chave .jks.
+4. Gere a versão release.
+
+Sem Android Studio, use o GitHub Actions conforme GERAR_APK_GITHUB_ACTIONS.txt.

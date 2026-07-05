@@ -1,53 +1,33 @@
 GERAR APK PELO GITHUB ACTIONS
-=============================
 
-Esta opção permite gerar o APK sem instalar o Android Studio no seu computador.
+1. Envie todos os arquivos desta pasta para o GitHub, mantendo a estrutura:
 
-PASSO A PASSO
--------------
+.github/workflows/build-apk.yml
+app/
+docs/
+web/
+build.gradle
+settings.gradle
+README.txt
 
-1) Crie um repositório no GitHub.
-   Pode ser privado.
+2. No GitHub, abra:
+Actions > Gerar APK Android
 
-2) Extraia este ZIP no seu computador.
+3. Clique em:
+Run workflow
 
-3) Envie para o repositório todos os arquivos e pastas que estão dentro da pasta:
-   ControleLacresGarantia
+4. Quando terminar, baixe o artifact:
+ControleLacresGarantia-debug-apk
 
-   Atenção: envie também a pasta oculta:
-   .github/workflows/build-apk.yml
+Dentro estará o APK debug, bom para teste.
 
-4) No GitHub, abra o repositório.
+5. Para gerar o APK release assinado, configure os Secrets descritos em:
+CONFIGURAR_RELEASE_ASSINADO_GITHUB_ACTIONS.txt
 
-5) Clique na aba:
-   Actions
+Depois rode o mesmo workflow novamente.
+Quando a assinatura estiver configurada, o GitHub também vai gerar o artifact:
+ControleLacresGarantia-release-assinado-apk
 
-6) Clique no workflow:
-   Gerar APK Android
-
-7) Clique em:
-   Run workflow
-
-8) Aguarde a execução terminar.
-
-9) No final da execução, baixe o arquivo em:
-   Artifacts > ControleLacresGarantia-debug-apk
-
-10) O APK estará dentro do ZIP baixado pelo GitHub.
-    Normalmente o nome será algo como:
-    app-debug.apk
-
-OBSERVAÇÕES IMPORTANTES
------------------------
-
-- Esse APK é uma versão debug, boa para teste e instalação manual.
-- Para vender/distribuir de forma profissional, o ideal é gerar um APK release assinado.
-- Para publicar na Play Store, o recomendado é gerar AAB assinado.
-- A versão debug pode ser instalada no Android permitindo instalação de apps de fontes desconhecidas.
-
-O workflow usa:
-- Ubuntu 24.04 no GitHub Actions
-- Java 17
-- Gradle 8.7
-- Android Gradle Plugin 8.6.1
-- compileSdk 35
+Observação:
+- O APK debug é para testes.
+- O APK release assinado é o recomendado para entregar aos clientes.

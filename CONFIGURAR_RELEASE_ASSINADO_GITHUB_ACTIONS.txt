@@ -1,0 +1,68 @@
+COMO GERAR APK RELEASE ASSINADO PELO GITHUB ACTIONS
+
+Esta versão já vem preparada para gerar:
+- APK debug: sempre gera.
+- APK release assinado: gera somente quando os Secrets abaixo forem configurados no GitHub.
+
+IMPORTANTE:
+Nunca coloque sua chave .jks nem senhas diretamente no repositório público.
+Use GitHub Secrets.
+
+1) Gere uma chave de assinatura uma única vez
+
+Em um computador que tenha Java instalado, execute:
+
+keytool -genkeypair -v -keystore controle-lacres-release.jks -alias controle-lacres -keyalg RSA -keysize 2048 -validity 10000
+
+Guarde este arquivo com muito cuidado:
+controle-lacres-release.jks
+
+Se você perder essa chave, não conseguirá atualizar APKs já instalados que foram assinados com ela.
+
+2) Converter a chave para Base64
+
+No Windows PowerShell, dentro da pasta onde está a chave:
+
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("controle-lacres-release.jks")) | Set-Clipboard
+
+Isso copia o conteúdo Base64 para a área de transferência.
+
+No Linux/macOS:
+
+base64 -w 0 controle-lacres-release.jks
+
+3) Criar os Secrets no GitHub
+
+No repositório:
+Settings > Secrets and variables > Actions > New repository secret
+
+Crie estes 4 Secrets:
+
+ANDROID_KEYSTORE_BASE64
+Cole aqui o texto Base64 gerado a partir do arquivo .jks.
+
+RELEASE_STORE_PASSWORD
+Senha da keystore que você digitou no keytool.
+
+RELEASE_KEY_ALIAS
+controle-lacres
+
+RELEASE_KEY_PASSWORD
+Senha da chave. Se você usou a mesma senha da keystore, coloque a mesma senha aqui.
+
+4) Rodar a Action
+
+Vá em:
+Actions > Gerar APK Android > Run workflow
+
+Quando terminar, baixe o artifact:
+ControleLacresGarantia-release-assinado-apk
+
+Dentro dele estará o APK release assinado.
+
+5) Cuidados para distribuição
+
+- Use sempre a mesma chave .jks para futuras atualizações.
+- Não compartilhe o arquivo .jks.
+- Não coloque a chave nem senhas em arquivo dentro do GitHub.
+- Antes de atualizar uma instalação de cliente, peça para exportar o backup JSON por segurança.

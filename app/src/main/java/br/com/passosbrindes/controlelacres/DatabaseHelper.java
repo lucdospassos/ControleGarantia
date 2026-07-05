@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean existsLacre(String lacre, String exceptId) {
+        lacre = DateUtils.normalizarLacre(lacre);
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT id FROM registros WHERE numero_lacre = ?", new String[]{lacre});
         try {
@@ -143,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static ContentValues toValues(Registro r) {
         ContentValues v = new ContentValues();
         v.put("id", r.id);
-        v.put("numero_lacre", r.numeroLacre);
+        v.put("numero_lacre", DateUtils.normalizarLacre(r.numeroLacre));
         v.put("cliente", r.cliente);
         v.put("telefone", r.telefone);
         v.put("data_cadastro", r.dataCadastro);
@@ -192,13 +193,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static Registro fromJson(JSONObject o) {
         Registro r = new Registro();
         r.id = o.optString("id", "");
-        r.numeroLacre = o.optString("numero_lacre", o.optString("codigo", ""));
+        r.numeroLacre = DateUtils.normalizarLacre(o.optString("numero_lacre", o.optString("codigo", "")));
         r.cliente = o.optString("cliente", o.optString("nome", ""));
         r.telefone = o.optString("telefone", o.optString("fone", ""));
-        r.dataCadastro = o.optString("data_cadastro", DateUtils.todayIso());
+        r.dataCadastro = DateUtils.toIsoDate(o.optString("data_cadastro", DateUtils.todayIso()));
         r.tipoGarantia = o.optString("tipo_garantia", "data");
         if (o.has("dias_garantia") && !o.isNull("dias_garantia")) r.diasGarantia = o.optInt("dias_garantia");
-        r.dataVencimento = o.optString("data_vencimento", o.optString("data", DateUtils.todayIso()));
+        r.dataVencimento = DateUtils.toIsoDate(o.optString("data_vencimento", o.optString("data", DateUtils.todayIso())));
         r.observacao = o.optString("observacao", "");
         r.criadoEm = o.optString("criado_em", DateUtils.nowIsoDateTime());
         r.atualizadoEm = o.optString("atualizado_em", DateUtils.nowIsoDateTime());

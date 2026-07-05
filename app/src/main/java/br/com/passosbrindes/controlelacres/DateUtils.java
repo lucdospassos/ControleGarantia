@@ -44,6 +44,25 @@ public class DateUtils {
         }
     }
 
+    public static String toIsoDate(String value) {
+        if (value == null) return "";
+        String v = value.trim();
+        if (v.matches("\\d{4}-\\d{2}-\\d{2}")) return v;
+        if (v.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            try {
+                return ISO.format(BR.parse(v));
+            } catch (ParseException e) {
+                return v;
+            }
+        }
+        return v;
+    }
+
+    public static String normalizarLacre(String lacre) {
+        if (lacre == null) return "";
+        return lacre.replaceAll("\\s+", "").toUpperCase(Locale.ROOT).trim();
+    }
+
     public static int daysBetweenToday(String iso) {
         try {
             Calendar today = Calendar.getInstance();
